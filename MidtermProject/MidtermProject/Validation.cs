@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace MidtermProject
 {
-    public abstract class Payment
+    public class Validation
     {
-
     }
 }
