@@ -8,5 +8,9 @@ namespace MidtermProject
 {
     public class CreditCardPayment : Payment
     {
+        public int CreditCardNumber { get; set; }
+        public DateTime? ExpirationDate { get; set; }
+        public int CVV { get; set; }
+
     }
 }
