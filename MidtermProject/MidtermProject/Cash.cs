@@ -8,5 +8,7 @@ namespace MidtermProject
 {
     public class Cash : Payment
     {
+        change
+        AmountTendored
     }
 }
