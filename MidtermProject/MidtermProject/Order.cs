@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MidtermProject
 {
-    public class Check : Payment
+    public class Order
     {
 
     }

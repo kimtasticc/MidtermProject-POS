@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MidtermProject
 {
-    public class CreditCardPayment : Payment
+    public class NonPerishableItems : Product
     {
     }
 }
