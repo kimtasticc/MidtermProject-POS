@@ -16,18 +16,24 @@ namespace MidtermProject
         }
         List<Product> GetAllProducts()
         {
-            //string fileName = "Product.txt";
-            string fileName = @"\.\MidtermProject\Product.txt";
+            string fileName = "Product.txt";
+            //string fileName = @"\.\MidtermProject\Product.txt";
             string line = "";
             string[] values;
             StreamReader reader = new StreamReader(fileName);
-
+            List<Product> items = new List<Product>();
             while (true)
             {
                 line = reader.ReadLine();
                 if (line == null) { break; }
                 values = line.Split('|');
-                items.Add(new Product() { Name = values[0], Description = values[1], Price = values[2] });
+                string name = values[0];
+                string desc = values[1];
+                string price = values[2];
+                double dblPrice = 0;
+                double.TryParse(price, out dblPrice);
+                string type = values[3];
+                items.Add(new Product(name, desc, dblPrice, type));
             }
 
             reader.Close();
