@@ -6,7 +6,24 @@ using System.Threading.Tasks;
 
 namespace MidtermProject
 {
-    public abstract class Product
+    public class Product
     {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public double Price { get; set; }
+        public string Type { get; set; }
+
+        public Product(string name, string description, double price, string type)
+        {
+            name = Name;
+            description = Description;
+            price = Price;
+            type = Type;
+        }
+
+
     }
 }
+
+
+
