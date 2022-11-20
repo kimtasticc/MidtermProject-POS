@@ -15,13 +15,11 @@ namespace MidtermProject
 
         public Product(string name, string description, double price, string type)
         {
-            name = Name;
-            description = Description;
-            price = Price;
-            type = Type;
+            Name = name;
+            Description = description;
+            Price = price;
+            Type = type;
         }
-
-
     }
 }
 
