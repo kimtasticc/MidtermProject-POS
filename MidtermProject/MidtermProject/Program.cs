@@ -99,9 +99,46 @@ void DisplayBill()
 
 }
 
-void PrintReceipt()
+void PrintReceipt(List<string> foodOrder, List<string> drinkOrder, List<string> merchOrder, int total, int taxAndPrice)
 {
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.WriteLine("         GOOD TIME BREWERY & EATS        ");
+    Console.WriteLine("-----------------------------------------");
+    Console.WriteLine(string.Format("{0,-33} | {1, 05}", "Item", "Price"));
+    Console.WriteLine("-----------------------------------------\n");
 
+    Console.WriteLine("FOOD");
+    Console.WriteLine("-----------------------------------------");
+
+    foreach (string food in foodOrder)
+    {
+        Console.WriteLine(string.Format("{0,-30} {1, 10}",
+        food, "$" + food.Price));
+    }
+
+    Console.WriteLine("\nDRINKS");
+    Console.WriteLine("-----------------------------------------");
+
+    foreach (string drink in drinkOrder)
+    {
+        Console.WriteLine(string.Format("{0,-30} {1, 10}",
+            drink, "$" + drink.Price));
+    }
+
+    Console.WriteLine("\nMERCHANDISE");
+    Console.WriteLine("-----------------------------------------");
+
+    foreach (string merch in merchOrder)
+    {
+        Console.WriteLine(string.Format("{0,-30} {1, 10}",
+            merch, "$" + merch.Price));
+    }
+
+    Console.WriteLine("\n-----------------------------------------");
+    Console.WriteLine(string.Format("{0,-33} | {1, 05}", "Subtotal", "$" + Payment.Total());
+    Console.WriteLine(string.Format("{0,-33} | {1, 05}", "Tax (6%)", "$" + Payment.Tax());
+    Console.WriteLine(string.Format("{0,-33} | {1, 05}", "Total Bill", "$" + Payment.CalculateGrandTotal(total, taxAndPrice));
+    Console.WriteLine("-----------------------------------------");
 }
 
 void AddToOrder(Product prod)
