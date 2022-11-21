@@ -1,0 +1,12 @@
+Two Hearted Ale IPA|An American IPA brewed and dry hopped with 100% Centennial hops.|6.00|Drink
+Siren Amber Ale|An American Amber / Red Ale style beer brewed by North Peak Brewing Company.|5.50|Drink
+PBR|Pabst Blue Ribbon|3.75|Drink
+Imperial Apple Hard Cider|Tastes kind of like apples.|6.00|Drink
+Pink Lemonade Hard Seltzer|Real fruity flavor.|5.00|Drink
+Classic Manhattan|Two parts whiskey, one part sweet vermouth and bitters.|12.50|Drink
+Giant Soft Pretzel with Beer Cheese|A match made in heaven.|8.95|Food
+Nacho Supreme|Nachos, beef, tomatoes, sour cream and cheese|13.50|Food
+Long Sleeve Logo Tee|Description|25.00|Merchandise
+Logo Hoodie|Description|35.00|Merchandise
+Beer Koozie 4pk|Description|10.00|Merchandise
+16oz Pint Glass|Description|21.99|Merchandise
