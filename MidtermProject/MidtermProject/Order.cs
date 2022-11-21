@@ -8,6 +8,6 @@ namespace MidtermProject
 {
     public class Order
     {
-
+        public List<OrderLine> OrderLines { get; set; }
     }
 }
