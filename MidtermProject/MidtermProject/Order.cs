@@ -9,5 +9,10 @@ namespace MidtermProject
     public class Order
     {
         public List<OrderLine> OrderLines { get; set; }
+
+        public Order()
+        {
+            OrderLines = new List<OrderLine>();
+        }
     }
 }
