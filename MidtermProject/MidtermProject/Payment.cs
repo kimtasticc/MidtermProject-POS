@@ -18,20 +18,20 @@ namespace MidtermProject
         public long CheckAcctNum { get; set; }
         public long CheckRoutNum { get; set; }
         public double CashTotal { get; set; }
-
-                         
+        //public double Subtotal { get; set; }                         
 
         Dictionary<string, double> items = new  Dictionary<string, double>();
+
+        public Payment(double cashTendered)
+        {
+            CashTotal = cashTendered; 
+        }
 
         public Payment(string ccnum, int cvvNum, DateOnly expDate )
         {
             CcNum = ccnum;
             CvvNum = cvvNum;
             ExpDate = expDate;
-
-
-
-
         }
 
         public Payment(long checkNum, long checkAcctNum, long checkRoutNum)
@@ -55,17 +55,17 @@ namespace MidtermProject
             return items.Values.Sum();
         }
 
-        public double Tax(out double totalTaxPaid, out double total)
+        public double Tax(out double totalTaxPaid, double total)
         {
             
-            total = items.Values.Sum();
+            //total = items.Values.Sum(); // total = subtotal
             double taxRate = .06;
             
-            totalTaxPaid = total * taxRate;
+            totalTaxPaid = total * taxRate; // totalTaxPaid = just the tax
 
-            double totalAfterTax = total + totalTaxPaid;
+            //double totalAfterTax = total + totalTaxPaid;
 
-            return totalAfterTax;
+            return totalTaxPaid; // totalAfterTax; // totalAfterTax = grand total
             
 
 
