@@ -36,7 +36,7 @@ void DisplayFoodMenu()
     Console.WriteLine($"".PadRight(46, '*'));
     foreach (Product p in productFile.products.Where(x => x.Type == "Food"))
     {
-        Console.WriteLine($"{p.Name.PadRight(40, '.')}{p.Price.ToString().PadLeft(6, '.'):C2}");
+        Console.WriteLine($"{p.Name.PadRight(40, '.')}{p.Price.ToString("C").PadLeft(6, '.'):C2}");
     }
 }
 
@@ -47,7 +47,7 @@ void DisplayDrinkMenu()
     Console.WriteLine($"".PadRight(46,'*'));
     foreach (Product p in productFile.products.Where(x => x.Type == "Drink"))
     {
-        Console.WriteLine($"{p.Name.PadRight(40, '.')}{p.Price.ToString().PadLeft(6, '.'):C2}");
+        Console.WriteLine($"{p.Name.PadRight(40, '.')}{p.Price.ToString("C").PadLeft(6, '.'):C2}");
     }
 }
 
@@ -58,7 +58,7 @@ void DisplayMerchMenu()
     Console.WriteLine($"".PadRight(46,'*'));
     foreach (Product p in productFile.products.Where(x => x.Type == "Merchandise"))
     {
-        Console.WriteLine($"{p.Name.PadRight(40, '.')}{p.Price.ToString().PadLeft(6, '.'):C2}");
+        Console.WriteLine($"{p.Name.PadRight(40, '.')}{p.Price.ToString("C").PadLeft(6, '.'):C2}");
     }
 }
 
