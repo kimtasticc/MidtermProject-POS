@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,9 +9,9 @@ namespace MidtermProject
 {
 
 
-    public abstract class Payment
+    public  class Payment
     {
-        public long CcNum { get; set; }
+        public string CcNum { get; set; }
         public int CvvNum { get; set; }
         public DateOnly ExpDate { get; set; }
         public long CheckNum { get; set; }
@@ -22,11 +23,14 @@ namespace MidtermProject
 
         Dictionary<string, double> items = new  Dictionary<string, double>();
 
-        public Payment(long ccnum, int cvvNum, DateOnly expDate )
+        public Payment(string ccnum, int cvvNum, DateOnly expDate )
         {
             CcNum = ccnum;
             CvvNum = cvvNum;
             ExpDate = expDate;
+
+
+
 
         }
 
@@ -38,20 +42,28 @@ namespace MidtermProject
 
         }
 
+        public string Last4()
+        {
+            
+            string last4 = CcNum.Substring(CcNum.Length - 12, 15);
+            return $"Grand Circus CC XXXX{last4}";
+          
+        }
+
         public double Total()
         {
             return items.Values.Sum();
         }
 
-        public double Tax(out double taxAndPrice, out double total)
+        public double Tax(out double totalTaxPaid, out double total)
         {
             
             total = items.Values.Sum();
             double taxRate = .06;
-            taxAndPrice = 1.06;
-            double totalTaxPaid = total * taxRate;
+            
+            totalTaxPaid = total * taxRate;
 
-            double totalAfterTax = total * taxAndPrice;
+            double totalAfterTax = total + totalTaxPaid;
 
             return totalAfterTax;
             
@@ -59,11 +71,6 @@ namespace MidtermProject
 
         }
 
-        public double CalculateGrandTotal(double taxAndPrice, double total)
-        {
-            return  total * taxAndPrice;
-
-        }
 
         public double CalculateChangeIfCash(double cashTotal, double total)
         {
