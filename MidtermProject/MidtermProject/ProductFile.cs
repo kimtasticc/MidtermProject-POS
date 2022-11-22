@@ -29,13 +29,14 @@ namespace MidtermProject
                 line = reader.ReadLine();
                 if (line == null) { break; }
                 values = line.Split('|');
-                string name = values[0];
-                string desc = values[1];
-                string price = values[2];
+                int id = int.Parse(values[0]);
+                string name = values[1];
+                string desc = values[2];
+                string price = values[3];
                 double dblPrice = 0;
                 double.TryParse(price, out dblPrice);
-                string type = values[3];
-                items.Add(new Product(name, desc, dblPrice, type));
+                string type = values[4];
+                items.Add(new Product(id, name, desc, dblPrice, type));
             }
 
             reader.Close();
