@@ -24,7 +24,7 @@ namespace MidtermProject
 
         public Payment(double cashTendered)
         {
-            CashTotal = cashTendered; 
+            CashTotal = cashTendered;
         }
 
         public Payment(string ccnum, int cvvNum, DateOnly expDate )
@@ -45,23 +45,18 @@ namespace MidtermProject
         public string Last4()
         {
             
-            string last4 = CcNum.Substring(CcNum.Length - 12, 15);
+            string last4 = CcNum.Substring(12);
             return $"Grand Circus CC XXXX{last4}";
           
         }
 
-        public double Total()
-        {
-            return items.Values.Sum();
-        }
-
-        public double Tax(out double totalTaxPaid, double total)
+        public double Tax(double subtotal)
         {
             
             //total = items.Values.Sum(); // total = subtotal
             double taxRate = .06;
             
-            totalTaxPaid = total * taxRate; // totalTaxPaid = just the tax
+            double totalTaxPaid = subtotal * taxRate; // totalTaxPaid = just the tax
 
             //double totalAfterTax = total + totalTaxPaid;
 
