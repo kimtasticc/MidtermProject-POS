@@ -52,10 +52,32 @@ while (!mainMenuOptions.Contains(mainMenuSelection))
             else if (orderMenuSelection == 2)
             {
                 DisplayDrinkMenu();
+                int drinkMenuSelection = 0;
+                while(!productFile.products.Exists(x => x.ID == drinkMenuSelection))
+                {
+                    drinkMenuSelection = GetDrinkMenuSelection();
+                }
+                Console.WriteLine("Please enter Qty");
+                int drinkQty = 0;
+                int.TryParse(Console.ReadLine(), out drinkQty);
+                Product product = productFile.products.Where(x => x.ID == drinkMenuSelection).FirstOrDefault();
+                OrderLine orderLine = new OrderLine(product, drinkQty);
+                order.OrderLines.Add(orderLine);
             }
             else if (orderMenuSelection == 3)
             {
                 DisplayMerchMenu();
+                int merchMenuSelection = 0;
+                while(productFile.products.Exists(x => x.ID == merchMenuSelection))
+                {
+                    merchMenuSelection = GetMerchMenuSelection();
+                }
+                Console.WriteLine("Please enter Qty");
+                int merchQty = 0;
+                int.TryParse(Console.ReadLine(), out merchQty);
+                Product product = productFile.products.Where(x => x.ID == merchMenuSelection).FirstOrDefault();
+                OrderLine orderline = new OrderLine (product, merchQty);
+                order.OrderLines.Add (orderline);
             }
             else if (orderMenuSelection == 4)
             {
