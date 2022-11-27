@@ -46,7 +46,7 @@ while (!mainMenuOptions.Contains(mainMenuSelection))
                 {
                     foodMenuSelection = GetFoodMenuSelection(); // validate this is a valid Product ID
                 }
-                Console.WriteLine("Please enter Qty");
+                Console.WriteLine("Please enter Qty: ");
                 int qty = 0;
                 int.TryParse(Console.ReadLine(), out qty);
                 Product product = productFile.products.Where(x => x.ID == foodMenuSelection).FirstOrDefault();
@@ -58,31 +58,37 @@ while (!mainMenuOptions.Contains(mainMenuSelection))
             {
                 DisplayDrinkMenu();
                 int drinkMenuSelection = 0;
-                while(!productFile.products.Exists(x => x.ID == drinkMenuSelection))
+
+                while (!productFile.products.Exists(x => x.ID == drinkMenuSelection))
                 {
                     drinkMenuSelection = GetDrinkMenuSelection();
                 }
-                Console.WriteLine("Please enter Qty");
-                int drinkQty = 0;
-                int.TryParse(Console.ReadLine(), out drinkQty);
+                Console.WriteLine("Please enter Qty: ");
+                int qty = 0;
+                int.TryParse(Console.ReadLine(), out qty);
                 Product product = productFile.products.Where(x => x.ID == drinkMenuSelection).FirstOrDefault();
-                OrderLine orderLine = new OrderLine(product, drinkQty);
+                OrderLine orderLine = new OrderLine(product, qty);
                 order.OrderLines.Add(orderLine);
+                drinkOrder.Add(orderLine);
+
             }
             else if (orderMenuSelection == 3)
             {
                 DisplayMerchMenu();
                 int merchMenuSelection = 0;
-                while(productFile.products.Exists(x => x.ID == merchMenuSelection))
+
+                while (!productFile.products.Exists(x => x.ID == merchMenuSelection))
                 {
                     merchMenuSelection = GetMerchMenuSelection();
                 }
-                Console.WriteLine("Please enter Qty");
-                int merchQty = 0;
-                int.TryParse(Console.ReadLine(), out merchQty);
+                Console.WriteLine("Please enter Qty: ");
+                int qty = 0;
+                int.TryParse(Console.ReadLine(), out qty);
                 Product product = productFile.products.Where(x => x.ID == merchMenuSelection).FirstOrDefault();
-                OrderLine orderline = new OrderLine (product, merchQty);
-                order.OrderLines.Add (orderline);
+                OrderLine orderLine = new OrderLine(product, qty);
+                order.OrderLines.Add(orderLine);
+                merchOrder.Add(orderLine);
+
             }
             else if (orderMenuSelection == 4)
             {
