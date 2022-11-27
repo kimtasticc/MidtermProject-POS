@@ -58,6 +58,7 @@ while (!mainMenuOptions.Contains(mainMenuSelection))
             {
                 DisplayDrinkMenu();
                 int drinkMenuSelection = 0;
+
                 while (!productFile.products.Exists(x => x.ID == drinkMenuSelection))
                 {
                     drinkMenuSelection = GetDrinkMenuSelection();
@@ -69,11 +70,13 @@ while (!mainMenuOptions.Contains(mainMenuSelection))
                 OrderLine orderLine = new OrderLine(product, qty);
                 order.OrderLines.Add(orderLine);
                 drinkOrder.Add(orderLine);
+
             }
             else if (orderMenuSelection == 3)
             {
                 DisplayMerchMenu();
                 int merchMenuSelection = 0;
+
                 while (!productFile.products.Exists(x => x.ID == merchMenuSelection))
                 {
                     merchMenuSelection = GetMerchMenuSelection();
@@ -85,6 +88,7 @@ while (!mainMenuOptions.Contains(mainMenuSelection))
                 OrderLine orderLine = new OrderLine(product, qty);
                 order.OrderLines.Add(orderLine);
                 merchOrder.Add(orderLine);
+
             }
             else if (orderMenuSelection == 4)
             {
@@ -207,7 +211,9 @@ void DisplayFoodMenu()
     Console.WriteLine($"".PadRight(46, '*'));
     foreach (Product p in productFile.products.Where(x => x.Type == "Food"))
     {
+
         Console.WriteLine($"{p.ID} {p.Name.PadRight(40, '.')}{p.Price.ToString().PadLeft(6, '.'):C2}");
+
     }
 }
 
@@ -225,7 +231,9 @@ void DisplayDrinkMenu()
     Console.WriteLine($"".PadRight(46,'*'));
     foreach (Product p in productFile.products.Where(x => x.Type == "Drink"))
     {
+
         Console.WriteLine($"{p.ID} {p.Name.PadRight(40, '.')}{p.Price.ToString().PadLeft(6, '.'):C2}");
+
     }
 }
 
