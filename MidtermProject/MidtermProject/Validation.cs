@@ -22,6 +22,83 @@ namespace MidtermProject
                 return false;
             }
         }
+        public bool ValidateQuantityInput(string userInputQtyRaw, out string quantityValidationResponse, out int userInputQty)
+        {
+            string userInputQtyCleaned = userInputQtyRaw.Trim();
+            try
+            {
+                userInputQty = Convert.ToInt32(userInputQtyCleaned);
+                if (userInputQty >= 1)
+                {
+                    quantityValidationResponse = "";
+                    return true;
+                }
+                else
+                {
+                    quantityValidationResponse = "Sorry your quantity cannot be zero, please try again.";
+                    return false;
+                }
+
+            }
+            catch
+            {
+                quantityValidationResponse = "Sorry that was not a valid input, please try again";
+                userInputQty = -1;
+                return false;
+            }
+        }
+        public bool ValidateMenuSelectionInput(string userInputMenuSelectionRaw, int maxMenuOptionNumber, out string menuSelectionValidationResponse, out int userInputMenuSelection)
+        {
+            string userInputMenuSelectionCleaned = userInputMenuSelectionRaw.Trim();
+            try
+            {
+                userInputMenuSelection = Convert.ToInt32(userInputMenuSelectionCleaned);
+                if (userInputMenuSelection >= 1 && userInputMenuSelection <= maxMenuOptionNumber)
+                {
+                    menuSelectionValidationResponse = "";
+                    return true;
+                }
+                else
+                {
+                    menuSelectionValidationResponse = "Sorry your is out of range, please try again.";
+                    return false;
+                }
+
+            }
+            catch
+            {
+                menuSelectionValidationResponse = "Sorry that was not a valid input, please try again";
+                userInputMenuSelection = -1;
+                return false;
+            }
+        }
+        public bool ValidateOrderedItemInput(string userInputOrderedItemRaw, List<int> itemIds,  out string menuOrderedItemValidationResponse, out int userInputOrderedItemOut)
+        {
+            string userInputOrderedItemCleaned = userInputOrderedItemRaw.Trim();
+            try
+            {
+                int userInputOrderedItem = Convert.ToInt32(userInputOrderedItemCleaned);
+                
+                foreach(int itemId in itemIds)
+                {
+                    if(itemId == userInputOrderedItem)
+                    {
+                        menuOrderedItemValidationResponse = "";
+                        userInputOrderedItemOut = userInputOrderedItem;
+                        return true;
+                    }                    
+                }
+                menuOrderedItemValidationResponse = "Sorry your is out of range, please try again.";
+                userInputOrderedItemOut = -1;
+                return false;
+            }
+            catch
+            {
+                menuOrderedItemValidationResponse = "Sorry that was not a valid input, please try again";
+                userInputOrderedItemOut = -1;
+                return false;
+            }
+        }
 
         //Pay with cash
         public bool ValidateCashTendered(string userCashInputRaw, double userCartTotalSum, out string validateCashTenderedResponse, out double userCashInput)
