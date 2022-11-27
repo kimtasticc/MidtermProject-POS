@@ -1,8 +1,8 @@
 ﻿using MidtermProject;
 
 ProductFile productFile = new ProductFile();
-//Dictionary<int, Product> productList = new Dictionary<int, Product>();
 Order order = new Order();
+Validation Validation = new Validation();
 
 
 int mainMenuSelection = 0;
@@ -10,14 +10,13 @@ int[] mainMenuOptions = new int[2] { 1, 2 };
 int mainMenuCounter = 0;
 
 int orderMenuSelection = 0;
-int orderMenuCounter = 0;
+//int orderMenuCounter = 0;
 int[] orderMenuOptions = new int[4] { 1, 2, 3, 4 };
 
-
-while (!mainMenuOptions.Contains(mainMenuSelection))
+while (true)
 {
     mainMenuCounter++;
-    if(mainMenuCounter > 1)
+    if (mainMenuCounter > 1)
     {
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine();
@@ -25,10 +24,10 @@ while (!mainMenuOptions.Contains(mainMenuSelection))
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.Gray;
     }
-    DisplayMainMenu();
     mainMenuSelection = GetMainMenuSelection();
-    if(mainMenuSelection == 1)
+    if (mainMenuSelection == 1)
     {
+        Console.Clear();
         mainMenuCounter = 0;
         List<OrderLine> foodOrder = new List<OrderLine>();
         List<OrderLine> drinkOrder = new List<OrderLine>();
@@ -36,65 +35,69 @@ while (!mainMenuOptions.Contains(mainMenuSelection))
 
         while (true)
         {
-            DisplayOrderMenu();
             orderMenuSelection = GetOrderMenuSelection();
             if (orderMenuSelection == 1)
             {
-                DisplayFoodMenu();
+                Console.Clear();
                 int foodMenuSelection = 0;
-                while (!productFile.products.Exists(x => x.ID == foodMenuSelection))
+                List<int> foodIds = new List<int>();
+                foreach (Product p in productFile.products.Where(x => x.Type == "Food"))
                 {
-                    foodMenuSelection = GetFoodMenuSelection(); // validate this is a valid Product ID
+                    foodIds.Add(p.ID);
                 }
-                Console.WriteLine("Please enter Qty: ");
+                foodMenuSelection = GetFoodMenuSelection(foodIds);
                 int qty = 0;
-                int.TryParse(Console.ReadLine(), out qty);
+                qty = GetUserQuantity();
                 Product product = productFile.products.Where(x => x.ID == foodMenuSelection).FirstOrDefault();
                 OrderLine orderLine = new OrderLine(product, qty);
                 order.OrderLines.Add(orderLine);
                 foodOrder.Add(orderLine);
+                Console.Clear();
             }
             else if (orderMenuSelection == 2)
             {
-                DisplayDrinkMenu();
+                Console.Clear();
                 int drinkMenuSelection = 0;
-
-                while (!productFile.products.Exists(x => x.ID == drinkMenuSelection))
+                List<int> drinkIds = new List<int>();
+                foreach (Product p in productFile.products.Where(x => x.Type == "Drink"))
                 {
-                    drinkMenuSelection = GetDrinkMenuSelection();
+                    drinkIds.Add(p.ID);
                 }
-                Console.WriteLine("Please enter Qty: ");
+                drinkMenuSelection = GetDrinkMenuSelection(drinkIds);
                 int qty = 0;
-                int.TryParse(Console.ReadLine(), out qty);
+                qty = GetUserQuantity();
                 Product product = productFile.products.Where(x => x.ID == drinkMenuSelection).FirstOrDefault();
                 OrderLine orderLine = new OrderLine(product, qty);
                 order.OrderLines.Add(orderLine);
                 drinkOrder.Add(orderLine);
+                Console.Clear();
 
             }
             else if (orderMenuSelection == 3)
             {
-                DisplayMerchMenu();
+                Console.Clear();
                 int merchMenuSelection = 0;
-
-                while (!productFile.products.Exists(x => x.ID == merchMenuSelection))
+                List<int> merchIds = new List<int>();
+                foreach (Product p in productFile.products.Where(x => x.Type == "Merchandise"))
                 {
-                    merchMenuSelection = GetMerchMenuSelection();
+                    merchIds.Add(p.ID);
                 }
-                Console.WriteLine("Please enter Qty: ");
+                merchMenuSelection = GetMerchMenuSelection(merchIds);
                 int qty = 0;
-                int.TryParse(Console.ReadLine(), out qty);
+                qty = GetUserQuantity();
                 Product product = productFile.products.Where(x => x.ID == merchMenuSelection).FirstOrDefault();
                 OrderLine orderLine = new OrderLine(product, qty);
                 order.OrderLines.Add(orderLine);
                 merchOrder.Add(orderLine);
+                Console.Clear();
 
             }
             else if (orderMenuSelection == 4)
             {
-                PaymentOptions paymentMethod = GetPaymentMethod(); // need validation
+                Console.Clear();
                 Payment payment = new Payment(0.00);
-
+                PaymentOptions paymentMethod = GetPaymentMethod(payment);
+                
                 switch (paymentMethod)
                 {
                     case PaymentOptions.CreditCard:
@@ -131,33 +134,28 @@ while (!mainMenuOptions.Contains(mainMenuSelection))
                 PrintReceipt(payment, order, foodOrder, drinkOrder, merchOrder, paymentMethod);
                 break;
             }
-        }      
-     
+            
+        }
     }
     else if (mainMenuSelection == 2)
     {
-        mainMenuCounter = 0;
+        break;
     }
 }
-
-
-
 void DisplayMainMenu()
 {
     Console.WriteLine($"".PadRight(46, '*'));
     Console.WriteLine($"Good Times Brewery & Eats");
     Console.WriteLine($"".PadRight(46, '*'));
     Console.WriteLine($"Enter 1 to start a new order.");
-    Console.WriteLine($"Enter 2 to Exit.");    
+    Console.WriteLine($"Enter 2 to Exit.");
 }
-
 int GetMainMenuSelection()
 {
-    int selection = 0;
-    int.TryParse(Console.ReadLine(), out selection);
-    return selection;
+    DisplayMainMenu();
+    int maxMenuOptionNumber = 2;
+    return GetUserMenuSelection(maxMenuOptionNumber);
 }
-
 void DisplayOrderMenu()
 {
     Console.ForegroundColor = ConsoleColor.Yellow;
@@ -170,19 +168,47 @@ void DisplayOrderMenu()
     Console.WriteLine($"Enter 3 to add Merchandise to order.");
     Console.WriteLine($"Enter 4 to cashout.");
 }
-
-PaymentOptions GetPaymentMethod()
+int GetOrderMenuSelection()
+{
+    DisplayOrderMenu();
+    int maxMenuOptionNumber = 4;
+    return GetUserMenuSelection(maxMenuOptionNumber);
+}
+PaymentOptions GetPaymentMethod(Payment payment)
 {
     int paymentMethod = 0;
-    Console.WriteLine("Choose from this list:");
-    Console.WriteLine("1 Credit Card");
-    Console.WriteLine("2 Cash");
-    Console.WriteLine("3 Check");
-    // needs to be 1, 2, or 3
-    int.TryParse(Console.ReadLine(), out paymentMethod);
+    double subtotal = order.OrderLines.Sum(x => x.ExtPrice);
+    double tax = payment.Tax(subtotal);
+
+    Console.WriteLine("Your Order Total is:");
+    Console.WriteLine($"{subtotal}");
+    Console.WriteLine($"{tax}");
+    Console.WriteLine($"{subtotal + tax}");
+    Console.WriteLine();
+
+    while (true)
+    {
+        Console.WriteLine("Choose from this list:");
+        Console.WriteLine("1 Credit Card");
+        Console.WriteLine("2 Cash");
+        Console.WriteLine("3 Check");
+        int maxMenuOptionNumber = 3;
+        string userInputMenuSelectionRaw = Console.ReadLine();
+        bool isValid = Validation.ValidateMenuSelectionInput(userInputMenuSelectionRaw, maxMenuOptionNumber, out string validationResponse, out int paymentMethodOut);
+        if (isValid)
+        {
+            paymentMethod = paymentMethodOut;
+            break;
+        }
+        else
+        {
+            PrintValidationResponse(validationResponse);
+        }
+    }
+
     PaymentOptions paymentOptions = new PaymentOptions();
-    
-    if(paymentMethod == 1)
+
+    if (paymentMethod == 1)
     {
         paymentOptions = PaymentOptions.CreditCard;
     }
@@ -196,14 +222,6 @@ PaymentOptions GetPaymentMethod()
     }
     return paymentOptions;
 }
-
-int GetOrderMenuSelection()
-{
-    int selection = 0;
-    int.TryParse(Console.ReadLine(), out selection);
-    return selection;
-}
-
 void DisplayFoodMenu()
 {
     Console.WriteLine($"".PadRight(46, '*'));
@@ -211,59 +229,86 @@ void DisplayFoodMenu()
     Console.WriteLine($"".PadRight(46, '*'));
     foreach (Product p in productFile.products.Where(x => x.Type == "Food"))
     {
-
         Console.WriteLine($"{p.ID} {p.Name.PadRight(40, '.')}{p.Price.ToString().PadLeft(6, '.'):C2}");
-
     }
 }
-
-int GetFoodMenuSelection()
+int GetFoodMenuSelection(List<int> foodIds)
 {
-    int selection = 0;
-    int.TryParse(Console.ReadLine(), out selection);
-    return selection;
+    while (true)
+    {
+        DisplayFoodMenu();
+        int selection = -1;
+        string userInputOrderedItemRaw = Console.ReadLine();
+        bool isValid = Validation.ValidateOrderedItemInput(userInputOrderedItemRaw, foodIds, out string validationResponse, out int selectionOut);
+        if (isValid)
+        {
+            selection = selectionOut;
+            return selection;
+        }
+        else
+        {
+            PrintValidationResponse(validationResponse);
+        }
+    }
 }
-
 void DisplayDrinkMenu()
 {
     Console.WriteLine($"".PadRight(46, '*'));
     Console.WriteLine("DRINKS");
-    Console.WriteLine($"".PadRight(46,'*'));
+    Console.WriteLine($"".PadRight(46, '*'));
     foreach (Product p in productFile.products.Where(x => x.Type == "Drink"))
     {
-
         Console.WriteLine($"{p.ID} {p.Name.PadRight(40, '.')}{p.Price.ToString().PadLeft(6, '.'):C2}");
-
     }
 }
-
-int GetDrinkMenuSelection()
+int GetDrinkMenuSelection(List<int> drinkIds)
 {
-    int selection = 0;
-    int.TryParse(Console.ReadLine(), out selection);
-    return selection;
+    while (true)
+    {
+        DisplayDrinkMenu();
+        int selection = -1;
+        string userInputOrderedItemRaw = Console.ReadLine();
+        bool isValid = Validation.ValidateOrderedItemInput(userInputOrderedItemRaw, drinkIds, out string validationResponse, out int selectionOut);
+        if (isValid)
+        {
+            selection = selectionOut;
+            return selection;
+        }
+        else
+        {
+            PrintValidationResponse(validationResponse);
+        }
+    }
 }
-
 void DisplayMerchMenu()
 {
     Console.WriteLine($"".PadRight(46, '*'));
     Console.WriteLine("MERCHANDISE");
-    Console.WriteLine($"".PadRight(46,'*'));
+    Console.WriteLine($"".PadRight(46, '*'));
     foreach (Product p in productFile.products.Where(x => x.Type == "Merchandise"))
     {
         Console.WriteLine($"{p.ID} {p.Name.PadRight(40, '.')}{p.Price.ToString().PadLeft(6, '.'):C2}");
     }
 }
-
-int GetMerchMenuSelection()
+int GetMerchMenuSelection(List<int> merchIds)
 {
-    int selection = 0;
-    int.TryParse(Console.ReadLine(), out selection);
-    return selection;
+    while (true)
+    {
+        DisplayMerchMenu();
+        int selection = -1;
+        string userInputOrderedItemRaw = Console.ReadLine();
+        bool isValid = Validation.ValidateOrderedItemInput(userInputOrderedItemRaw, merchIds, out string validationResponse, out int selectionOut);
+        if (isValid)
+        {
+            selection = selectionOut;
+            return selection;
+        }
+        else
+        {
+            PrintValidationResponse(validationResponse);
+        }
+    }
 }
-
-// Removed DisplayBill, it seemed redundant with all the information in the receipt.
-
 void PrintReceipt(Payment payment, Order order, List<OrderLine> foodOrder, List<OrderLine> drinkOrder, List<OrderLine> merchOrder, PaymentOptions paymentMethod)
 {
     double subtotal = order.OrderLines.Sum(x => x.ExtPrice);
@@ -278,22 +323,20 @@ void PrintReceipt(Payment payment, Order order, List<OrderLine> foodOrder, List<
 
     Console.WriteLine("FOOD");
     Console.WriteLine("--------------------------------------------------------");
- 
+
     foreach (OrderLine food in foodOrder)
     {
         Console.WriteLine(string.Format("{0,-40} | {1,-04} | {2, 0}",
         food.Product.Name, food.Qty, string.Format("{0:C}", food.ExtPrice)));
     }
-
     Console.WriteLine("\nDRINKS");
     Console.WriteLine("--------------------------------------------------------");
 
-   foreach (OrderLine drink in drinkOrder)
+    foreach (OrderLine drink in drinkOrder)
     {
         Console.WriteLine(string.Format("{0,-40} | {1,-04} | {2, 0}",
         drink.Product.Name, drink.Qty, string.Format("{0:C}", drink.ExtPrice)));
     }
-
     Console.WriteLine("\nMERCHANDISE");
     Console.WriteLine("--------------------------------------------------------");
 
@@ -302,14 +345,11 @@ void PrintReceipt(Payment payment, Order order, List<OrderLine> foodOrder, List<
         Console.WriteLine(string.Format("{0,-40} | {1,-04} | {2, 0}",
         merch.Product.Name, merch.Qty, string.Format("{0:C}", merch.ExtPrice)));
     }
-
     Console.Write("\nTOTAL");
     Console.WriteLine("\n--------------------------------------------------------");
-
     Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Subtotal", string.Format("{0:C}", subtotal)));
     Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Tax (6%)", string.Format("{0:C}", tax)));
     Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Total Bill", string.Format("{0:C}", subtotal + tax)));
-
     Console.Write("\nPAYMENT");
     Console.WriteLine("\n--------------------------------------------------------");
 
@@ -318,7 +358,7 @@ void PrintReceipt(Payment payment, Order order, List<OrderLine> foodOrder, List<
         case PaymentOptions.CreditCard:
             Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Payment via Credit Card", payment.Last4()));
             break;
-        
+
         case PaymentOptions.Cash:
             Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Cash Tendered", string.Format("{0:C}", cashTendered)));
             Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Change Returned", string.Format("{0:C}", (cashTendered - (subtotal + tax)))));
@@ -328,4 +368,51 @@ void PrintReceipt(Payment payment, Order order, List<OrderLine> foodOrder, List<
             break;
     }
     Console.WriteLine("\n--------------------------------------------------------");
+}
+int GetUserMenuSelection(int maxMenuOptionNumber)
+{
+    while (true)
+    {
+        int selection = -1;
+        string userInputMenuSelectionRaw = Console.ReadLine();
+        bool isValid = Validation.ValidateMenuSelectionInput(userInputMenuSelectionRaw, maxMenuOptionNumber, out string validationResponse, out int userInputMenuSelection);
+        if (isValid)
+        {
+            selection = userInputMenuSelection;
+            return selection;
+        }
+        else
+        {
+            PrintValidationResponse(validationResponse);
+        }
+    }
+}
+int GetUserQuantity()
+{
+    while (true)
+    {
+        int qty = 0;
+        Console.WriteLine("Please enter Qty: ");
+        string userInputQtyRaw = Console.ReadLine();
+        bool isValid = Validation.ValidateQuantityInput(userInputQtyRaw, out string validationResponse, out qty);
+        if (isValid)
+        {
+            return qty;
+        }
+        else
+        {
+            PrintValidationResponse(validationResponse);
+        }
+    }
+}
+void PrintValidationResponse(string validationResponse)
+{
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine();
+    Console.WriteLine(validationResponse);
+    Console.WriteLine("Press any key to continue");
+    Console.WriteLine();
+    Console.ForegroundColor = ConsoleColor.Gray;
+    Console.ReadKey();
+    Console.Clear();
 }
