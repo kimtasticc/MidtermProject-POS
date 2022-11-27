@@ -1,12 +1,12 @@
-1|Two Hearted Ale IPA|An American IPA brewed and dry hopped with 100% Centennial hops.|6.00|Drink
-2|Siren Amber Ale|An American Amber / Red Ale style beer brewed by North Peak Brewing Company.|5.50|Drink
-3|PBR|Pabst Blue Ribbon|3.75|Drink
-4|Imperial Apple Hard Cider|Tastes kind of like apples.|6.00|Drink
-5|Pink Lemonade Hard Seltzer|Real fruity flavor.|5.00|Drink
-6|Classic Manhattan|Two parts whiskey, one part sweet vermouth and bitters.|12.50|Drink
-7|Giant Soft Pretzel with Beer Cheese|A match made in heaven.|8.95|Food
-8|Nacho Supreme|Nachos, beef, tomatoes, sour cream and cheese|13.50|Food
-9|Long Sleeve Logo Tee|Description|25.00|Merchandise
-10|Logo Hoodie|Description|35.00|Merchandise
-11|Beer Koozie 4pk|Description|10.00|Merchandise
-12|16oz Pint Glass|Description|21.99|Merchandise
+101|Two Hearted Ale IPA|An American IPA brewed and dry hopped with 100% Centennial hops.|6.00|Drink
+102|Siren Amber Ale|An American Amber / Red Ale style beer brewed by North Peak Brewing Company.|5.50|Drink
+103|PBR|Pabst Blue Ribbon|3.75|Drink
+104|Imperial Apple Hard Cider|Tastes kind of like apples.|6.00|Drink
+105|Pink Lemonade Hard Seltzer|Real fruity flavor.|5.00|Drink
+106|Classic Manhattan|Two parts whiskey, one part sweet vermouth and bitters.|12.50|Drink
+201|Giant Soft Pretzel with Beer Cheese|A match made in heaven.|8.95|Food
+202|Nacho Supreme|Nachos, beef, tomatoes, sour cream and cheese|13.50|Food
+301|Long Sleeve Logo Tee|Description|25.00|Merchandise
+302|Logo Hoodie|Description|35.00|Merchandise
+303|Beer Koozie 4pk|Description|10.00|Merchandise
+304|16oz Pint Glass|Description|21.99|Merchandise
