@@ -4,6 +4,7 @@ ProductFile productFile = new ProductFile();
 //Dictionary<int, Product> productList = new Dictionary<int, Product>();
 Order order = new Order();
 
+
 int mainMenuSelection = 0;
 int[] mainMenuOptions = new int[2] { 1, 2 };
 int mainMenuCounter = 0;
@@ -29,7 +30,10 @@ while (!mainMenuOptions.Contains(mainMenuSelection))
     if(mainMenuSelection == 1)
     {
         mainMenuCounter = 0;
-        
+        List<OrderLine> foodOrder = new List<OrderLine>();
+        List<OrderLine> drinkOrder = new List<OrderLine>();
+        List<OrderLine> merchOrder = new List<OrderLine>();
+
         while (true)
         {
             DisplayOrderMenu();
@@ -48,6 +52,7 @@ while (!mainMenuOptions.Contains(mainMenuSelection))
                 Product product = productFile.products.Where(x => x.ID == foodMenuSelection).FirstOrDefault();
                 OrderLine orderLine = new OrderLine(product, qty);
                 order.OrderLines.Add(orderLine);
+                foodOrder.Add(orderLine);
             }
             else if (orderMenuSelection == 2)
             {
@@ -60,7 +65,7 @@ while (!mainMenuOptions.Contains(mainMenuSelection))
             else if (orderMenuSelection == 4)
             {
                 PaymentOptions paymentMethod = GetPaymentMethod(); // need validation
-                Payment payment;
+                Payment payment = new Payment(0.00);
 
                 switch (paymentMethod)
                 {
@@ -86,13 +91,16 @@ while (!mainMenuOptions.Contains(mainMenuSelection))
                         long checkNum = 0;
                         long acctNum = 0;
                         long routeNum = 0;
+                        Console.WriteLine("Enter Your Check Number:");
                         Int64.TryParse(Console.ReadLine(), out checkNum);
+                        Console.WriteLine("Enter Your Account Number:");
                         Int64.TryParse(Console.ReadLine(), out acctNum);
+                        Console.WriteLine("Enter Your Routing Number:");
                         Int64.TryParse(Console.ReadLine(), out routeNum);
                         payment = new Payment(checkNum, acctNum, routeNum); // need actual values from program
                         break;
                 }
-                DisplayBill();
+                PrintReceipt(payment, order, foodOrder, drinkOrder, merchOrder, paymentMethod);
                 break;
             }
         }      
@@ -103,6 +111,8 @@ while (!mainMenuOptions.Contains(mainMenuSelection))
         mainMenuCounter = 0;
     }
 }
+
+
 
 void DisplayMainMenu()
 {
@@ -143,6 +153,7 @@ PaymentOptions GetPaymentMethod()
     // needs to be 1, 2, or 3
     int.TryParse(Console.ReadLine(), out paymentMethod);
     PaymentOptions paymentOptions = new PaymentOptions();
+    
     if(paymentMethod == 1)
     {
         paymentOptions = PaymentOptions.CreditCard;
@@ -223,111 +234,70 @@ int GetMerchMenuSelection()
     return selection;
 }
 
-void DisplayBill()
+// Removed DisplayBill, it seemed redundant with all the information in the receipt.
+
+void PrintReceipt(Payment payment, Order order, List<OrderLine> foodOrder, List<OrderLine> drinkOrder, List<OrderLine> merchOrder, PaymentOptions paymentMethod)
 {
-    double subtotal = 0;
-    double tax = 0;
-    const double taxRate = 0.06;
-    double total = 0;
-    subtotal = order.OrderLines.Sum(x => x.ExtPrice);
-    tax =  //subtotal * taxRate;
-    total = subtotal + tax;
+    double subtotal = order.OrderLines.Sum(x => x.ExtPrice);
+    double tax = payment.Tax(subtotal);
+    double cashTendered = payment.CashTotal;
 
     Console.ForegroundColor = ConsoleColor.Yellow;
-    Console.WriteLine("         GOOD TIME BREWERY & EATS        ");
-    Console.WriteLine("-----------------------------------------");
-    Console.WriteLine(string.Format("{0,-33} | {1, 05}", "Item", "Price"));
-    Console.WriteLine("-----------------------------------------\n");
+    Console.WriteLine("                GOOD TIME BREWERY & EATS                ");
+    Console.WriteLine("--------------------------------------------------------");
+    Console.WriteLine(string.Format("{0,-40} | {1,-04} | {2, 0}", "Item", "Qty", "Price"));
+    Console.WriteLine("------------------------------------------------------\n");
 
     Console.WriteLine("FOOD");
-    Console.WriteLine("-----------------------------------------");
-
-    //foreach (string food in foodOrder)
-    //{
-        //Console.WriteLine(string.Format("{0,-30} {1, 10}",
-        //food, "$" + food.Price));
-    //}
-
-    Console.WriteLine("\nDRINKS");
-    Console.WriteLine("-----------------------------------------");
-
-    //foreach (string drink in drinkOrder)
-    //{
-        //Console.WriteLine(string.Format("{0,-30} {1, 10}",
-        //    drink, "$" + drink.Price));
-    //}
-
-    Console.WriteLine("\nMERCHANDISE");
-    Console.WriteLine("-----------------------------------------");
-
-    //foreach (string merch in merchOrder)
-    //{
-        //Console.WriteLine(string.Format("{0,-30} {1, 10}",
-        //merch, "$" + merch.Price));
-    //}
-
-    Console.WriteLine("\n-----------------------------------------");
-    //Console.WriteLine(string.Format("{0,-33} | {1, 05}", "Subtotal", "$" + Payment.Total());
-    //Console.WriteLine(string.Format("{0,-33} | {1, 05}", "Tax (6%)", "$" + Payment.Tax());
-    //Console.WriteLine(string.Format("{0,-33} | {1, 05}", "Total Bill", "$" + Payment.CalculateGrandTotal(total, taxAndPrice));
-    Console.WriteLine("-----------------------------------------");
-}
-
-void PrintReceipt(List<string> foodOrder, List<string> drinkOrder, List<string> merchOrder, int total, int taxAndPrice)
-{
-    Console.ForegroundColor = ConsoleColor.Yellow;
-    Console.WriteLine("         GOOD TIME BREWERY & EATS        ");
-    Console.WriteLine("-----------------------------------------");
-    Console.WriteLine(string.Format("{0,-33} | {1, 05}", "Item", "Price"));
-    Console.WriteLine("-----------------------------------------\n");
-
-    Console.WriteLine("FOOD");
-    Console.WriteLine("-----------------------------------------");
-
-    foreach (string food in foodOrder)
+    Console.WriteLine("--------------------------------------------------------");
+ 
+    foreach (OrderLine food in foodOrder)
     {
-        //Console.WriteLine(string.Format("{0,-30} {1, 10}",
-        //food, "$" + food.Price));
+        Console.WriteLine(string.Format("{0,-40} | {1,-04} | {2, 0}",
+        food.Product.Name, food.Qty, string.Format("{0:C}", food.ExtPrice)));
     }
 
     Console.WriteLine("\nDRINKS");
-    Console.WriteLine("-----------------------------------------");
+    Console.WriteLine("--------------------------------------------------------");
 
-    foreach (string drink in drinkOrder)
+   foreach (OrderLine drink in drinkOrder)
     {
-        //Console.WriteLine(string.Format("{0,-30} {1, 10}",
-        //    drink, "$" + drink.Price));
+        Console.WriteLine(string.Format("{0,-40} | {1,-04} | {2, 0}",
+        drink.Product.Name, drink.Qty, string.Format("{0:C}", drink.ExtPrice)));
     }
 
     Console.WriteLine("\nMERCHANDISE");
-    Console.WriteLine("-----------------------------------------");
+    Console.WriteLine("--------------------------------------------------------");
 
-    foreach (string merch in merchOrder)
+    foreach (OrderLine merch in merchOrder)
     {
-        //Console.WriteLine(string.Format("{0,-30} {1, 10}",
-        //merch, "$" + merch.Price));
+        Console.WriteLine(string.Format("{0,-40} | {1,-04} | {2, 0}",
+        merch.Product.Name, merch.Qty, string.Format("{0:C}", merch.ExtPrice)));
     }
 
-    Console.WriteLine("\n-----------------------------------------");
-    //Console.WriteLine(string.Format("{0,-33} | {1, 05}", "Subtotal", "$" + Payment.Total());
-    //Console.WriteLine(string.Format("{0,-33} | {1, 05}", "Tax (6%)", "$" + Payment.Tax());
-    //Console.WriteLine(string.Format("{0,-33} | {1, 05}", "Total Bill", "$" + Payment.CalculateGrandTotal(total, taxAndPrice));
-    Console.WriteLine("-----------------------------------------");
+    Console.Write("\nTOTAL");
+    Console.WriteLine("\n--------------------------------------------------------");
+
+    Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Subtotal", string.Format("{0:C}", subtotal)));
+    Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Tax (6%)", string.Format("{0:C}", tax)));
+    Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Total Bill", string.Format("{0:C}", subtotal + tax)));
+
+    Console.Write("\nPAYMENT");
+    Console.WriteLine("\n--------------------------------------------------------");
+
+    switch (paymentMethod)
+    {
+        case PaymentOptions.CreditCard:
+            Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Payment via Credit Card", payment.Last4()));
+            break;
+        
+        case PaymentOptions.Cash:
+            Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Cash Tendered", string.Format("{0:C}", cashTendered)));
+            Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Change Returned", string.Format("{0:C}", (cashTendered - (subtotal + tax)))));
+            break;
+        case PaymentOptions.Check:
+            Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Payment via Check #", payment.CheckNum));
+            break;
+    }
+    Console.WriteLine("\n--------------------------------------------------------");
 }
-
-void AddToOrder(Product prod)
-{
-    
-}
-
-PaymentOptions AskPaymentType()
-{
-    // if... return PaymentOptions.CreditCard
-
-    // if... return PaymentOptions.Cash
-
-    // if... return PaymentOptions.Check
-
-    return PaymentOptions.Cash;
-}
-
