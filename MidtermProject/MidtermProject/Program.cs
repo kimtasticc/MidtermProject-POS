@@ -1,5 +1,7 @@
 ﻿using MidtermProject;
 
+Setup.Run();
+
 ProductFile productFile = new ProductFile();
 Order order = new Order();
 Validation Validation = new Validation();
