@@ -38,7 +38,6 @@ namespace MidtermProject
                     quantityValidationResponse = "Sorry your quantity cannot be zero, please try again.";
                     return false;
                 }
-
             }
             catch
             {
@@ -63,7 +62,6 @@ namespace MidtermProject
                     menuSelectionValidationResponse = "Sorry your is out of range, please try again.";
                     return false;
                 }
-
             }
             catch
             {
@@ -143,7 +141,6 @@ namespace MidtermProject
                     validateCreditCardNumberResponse = "Sorry that was not a valid input, please try again";
                     return false;
                 }
-
             }
             catch
             {
@@ -155,12 +152,12 @@ namespace MidtermProject
         public bool ValidateCreditCardExpirationDate(string userCreditCardExpirationDateRaw, out string validateCreditCardExpirationDateResponse, out DateTime userDateValue)
         {
             DateTime dateValue;
-
+            DateTime today = DateTime.Now;
             if (DateTime.TryParse(userCreditCardExpirationDateRaw, out dateValue))
             {
-                if (dateValue < DateTime.Now)
+                if (dateValue <= DateTime.Now)
                 {
-                    validateCreditCardExpirationDateResponse = "Your credit card is expired, please use a different payment.";
+                    validateCreditCardExpirationDateResponse = "Your credit card is expired, please try again.";
                     userDateValue = dateValue;
                     return false;
                 }
@@ -178,7 +175,7 @@ namespace MidtermProject
                 return false;
             }
         }
-        public bool ValidateCreditCardCVVNumber(string userCreditCardCVVRaw, out string validateCreditCardCVVNumberResponse, out string userCreditCardCVVClean)
+        public bool ValidateCreditCardCVVNumber(string userCreditCardCVVRaw, out string validateCreditCardCVVNumberResponse, out int userCreditCardCVVClean)
         {
             string userCreditCardCVV = userCreditCardCVVRaw.Trim();
             if(userCreditCardCVV.Length == 3)
@@ -186,27 +183,35 @@ namespace MidtermProject
                 try
                 {
                     int userCreditCardCVVInt = Convert.ToInt32(userCreditCardCVV);
-                    validateCreditCardCVVNumberResponse = "";
-                    userCreditCardCVVClean = userCreditCardCVV;
-                    return true;
+                    if (userCreditCardCVVInt > 0)
+                    {
+                        validateCreditCardCVVNumberResponse = "";
+                        userCreditCardCVVClean = userCreditCardCVVInt;
+                        return true;
+                    }
+                    else
+                    {
+                        validateCreditCardCVVNumberResponse = "Sorry that was not a valid input, please try again";
+                        userCreditCardCVVClean = -1;
+                        return false;
+                    }
                 }
                 catch
                 {
                     validateCreditCardCVVNumberResponse = "CVV must only contain numbers, please try again";
-                    userCreditCardCVVClean = "";
+                    userCreditCardCVVClean = -1;
                     return false;
                 }
             }
             else
             {
                 validateCreditCardCVVNumberResponse = "Sorry that was not a valid input, please try again";
-                userCreditCardCVVClean = "";
+                userCreditCardCVVClean = -1;
                 return false;
             }
         }
 
-        //Pay with check
-                
+        //Pay with check                
         public bool ValidateCheckNumber(string userCheckNumberRaw, out string validateCheckNumberResponse, out string userCheckNumberClean)
         {
             string userCheckNumber = userCheckNumberRaw.Trim();
@@ -215,13 +220,22 @@ namespace MidtermProject
                 try
                 {
                     int userCheckNumberInt = Convert.ToInt32(userCheckNumber);
-                    validateCheckNumberResponse = "";
-                    userCheckNumberClean = userCheckNumber;
-                    return true;
+                    if(userCheckNumberInt > 0)
+                    {
+                        validateCheckNumberResponse = "";
+                        userCheckNumberClean = userCheckNumber;
+                        return true;
+                    }
+                    else
+                    {
+                        validateCheckNumberResponse = "You must enter a valid check number to continue";
+                        userCheckNumberClean = "";
+                        return false;
+                    }
                 }
                 catch
                 {
-                    validateCheckNumberResponse = "CVV must only contain numbers, please try again";
+                    validateCheckNumberResponse = "Check number must only contain numbers, please try again";
                     userCheckNumberClean = "";
                     return false;
                 }
@@ -241,9 +255,18 @@ namespace MidtermProject
                 try
                 {
                     int userCheckRoutingNumberInt = Convert.ToInt32(userCheckRoutingNumber);
-                    validateCheckRoutingNumberResponse = "";
-                    userCheckRoutingNumberClean = userCheckRoutingNumber;
-                    return true;
+                    if(userCheckRoutingNumberInt > 0)
+                    {
+                        validateCheckRoutingNumberResponse = "";
+                        userCheckRoutingNumberClean = userCheckRoutingNumber;
+                        return true;
+                    }
+                    else
+                    {
+                        validateCheckRoutingNumberResponse = "You must enter a valid routing number to continue";
+                        userCheckRoutingNumberClean = "";
+                        return false;
+                    }
                 }
                 catch
                 {
@@ -267,20 +290,29 @@ namespace MidtermProject
                 try
                 {
                     int userCheckAccountNumberInt = Convert.ToInt32(userCheckAccountNumber);
-                    validateCheckAccountNumberResponse = "";
-                    userCheckAccountNumberClean = userCheckAccountNumber;
-                    return true;
+                    if(userCheckAccountNumberInt > 0)
+                    {
+                        validateCheckAccountNumberResponse = "";
+                        userCheckAccountNumberClean = userCheckAccountNumber;
+                        return true;
+                    }
+                    else
+                    {
+                        validateCheckAccountNumberResponse = "You must enter a valid account number to continue";
+                        userCheckAccountNumberClean = "";
+                        return false;
+                    }
                 }
                 catch
                 {
-                    validateCheckAccountNumberResponse = "Routing number must only contain numbers, please try again";
+                    validateCheckAccountNumberResponse = "Account number must only contain numbers, please try again";
                     userCheckAccountNumberClean = "";
                     return false;
                 }
             }
             else
             {
-                validateCheckAccountNumberResponse = "You must enter a valid routing number to continue";
+                validateCheckAccountNumberResponse = "You must enter a valid account number to continue";
                 userCheckAccountNumberClean = "";
                 return false;
             }
