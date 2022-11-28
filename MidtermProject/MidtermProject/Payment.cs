@@ -13,12 +13,12 @@ namespace MidtermProject
     {
         public string CcNum { get; set; }
         public int CvvNum { get; set; }
-        public DateOnly ExpDate { get; set; }
+        public DateTime ExpDate { get; set; }
         public long CheckNum { get; set; }
         public long CheckAcctNum { get; set; }
         public long CheckRoutNum { get; set; }
         public double CashTotal { get; set; }
-        //public double Subtotal { get; set; }                         
+        public double GrandTotal { get; set; }                         
 
         Dictionary<string, double> items = new  Dictionary<string, double>();
 
@@ -27,7 +27,7 @@ namespace MidtermProject
             CashTotal = cashTendered;
         }
 
-        public Payment(string ccnum, int cvvNum, DateOnly expDate )
+        public Payment(string ccnum, int cvvNum, DateTime expDate )
         {
             CcNum = ccnum;
             CvvNum = cvvNum;
@@ -39,43 +39,26 @@ namespace MidtermProject
             CheckAcctNum = checkAcctNum;
             CheckRoutNum = checkRoutNum;
             CheckNum = checkNum;
-
         }
 
         public string Last4()
         {
-            
             string last4 = CcNum.Substring(12);
             return $"Grand Circus CC XXXX{last4}";
-          
         }
 
         public double Tax(double subtotal)
         {
-            
-            //total = items.Values.Sum(); // total = subtotal
             double taxRate = .06;
-            
-            double totalTaxPaid = subtotal * taxRate; // totalTaxPaid = just the tax
-
-            //double totalAfterTax = total + totalTaxPaid;
-
-            return totalTaxPaid; // totalAfterTax; // totalAfterTax = grand total
-            
-
-
+            double totalTaxPaid = subtotal * taxRate;
+            return totalTaxPaid; 
         }
-
 
         public double CalculateChangeIfCash(double cashTotal, double total)
         {
             CashTotal = cashTotal;
-
             double change = cashTotal - total;
             return cashTotal;
-
-
         }
-
     }
 }

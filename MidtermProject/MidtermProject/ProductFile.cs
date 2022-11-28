@@ -15,8 +15,7 @@ namespace MidtermProject
             products.AddRange(GetAllProducts());
         }
         List<Product> GetAllProducts()
-        {
-            //string fileName = "C:\\MidTerm\\Product.txt";
+        {            
             string fileName = Setup.productFile.FullName;
             string line = "";
             string[] values;
@@ -36,7 +35,6 @@ namespace MidtermProject
                 string type = values[4];
                 items.Add(new Product(id, name, desc, dblPrice, type));
             }
-
             reader.Close();
             return items;
         }
