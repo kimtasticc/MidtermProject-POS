@@ -16,10 +16,8 @@ namespace MidtermProject
         }
         List<Product> GetAllProducts()
         {
-            string fileName = "C:\\MidTerm\\Product.txt";
-            //string fileName = @".\MidtermProject\MidtermProject\Product.txt";
-            //string fileName = @"\Users\John.Poston\source\repos\MidtermProjectPOS\MidtermProject\MidtermProject\Product.txt";
-            //string fileName = @"C:\Users\John.Poston\source\repos\MidtermProjectPOS\MidtermProject\MidtermProject\Product.txt";
+            //string fileName = "C:\\MidTerm\\Product.txt";
+            string fileName = Setup.productFile.FullName;
             string line = "";
             string[] values;
             StreamReader reader = new StreamReader(fileName);
