@@ -8,7 +8,6 @@ namespace MidtermProject
 {
     public enum PaymentOptions
     {
-
         CreditCard = 1,
         Cash, 
         Check

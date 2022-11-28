@@ -1,17 +1,16 @@
 ﻿using MidtermProject;
 
+Setup.Run();
 ProductFile productFile = new ProductFile();
 Order order = new Order();
 Validation Validation = new Validation();
 
-
 int mainMenuSelection = 0;
 int[] mainMenuOptions = new int[2] { 1, 2 };
 int mainMenuCounter = 0;
-
 int orderMenuSelection = 0;
-//int orderMenuCounter = 0;
 int[] orderMenuOptions = new int[4] { 1, 2, 3, 4 };
+string insertSpace = " ";
 
 while (true)
 {
@@ -97,44 +96,136 @@ while (true)
                 Console.Clear();
                 Payment payment = new Payment(0.00);
                 PaymentOptions paymentMethod = GetPaymentMethod(payment);
-                
+
                 switch (paymentMethod)
                 {
                     case PaymentOptions.CreditCard:
-                        Console.WriteLine("Enter Credit Card Number:");
-                        string ccNum = Console.ReadLine();
-                        Console.WriteLine("Enter Expiration Date");
-                        string expDate = Console.ReadLine();
-                        Console.WriteLine("Enter CVV");
+                        string ccNum = "";
+                        DateTime expDate = new DateTime();
                         int cvv = 0;
-                        int.TryParse(Console.ReadLine(), out cvv);
-                        payment = new Payment(ccNum, cvv, DateOnly.Parse(expDate)); // need actual values from program
+                        while (true)
+                        {
+                            Console.WriteLine("Enter 16-Digit Credit Card Number:");
+                            string userCreditCardNumberInputRaw = Console.ReadLine();
+                            bool isValid = Validation.ValidateCreditCardNumber(userCreditCardNumberInputRaw, out string validationResponse, out string userCreditCardNumberInputClean);
+                            if (isValid)
+                            {
+                                ccNum = userCreditCardNumberInputClean;
+                                break;
+                            }
+                            else
+                            {
+                                PrintValidationResponse(validationResponse);
+                            }
+                        }
+                        while (true)
+                        {
+                            Console.WriteLine("Enter Expiration Date (mm/dd/yy)");
+                            string userCreditCardExpirationDateRaw = Console.ReadLine();
+                            bool isValid = Validation.ValidateCreditCardExpirationDate(userCreditCardExpirationDateRaw, out string validationResponse, out DateTime userDateValue);
+                            if (isValid)
+                            {
+                                expDate = userDateValue;
+                                break;
+                            }
+                            else
+                            {
+                                PrintValidationResponse(validationResponse);
+                            }
+                        }
+                        while (true)
+                        {
+                            Console.WriteLine("Enter 3-Digit CVV");
+                            string userCreditCardCVVRaw = Console.ReadLine();
+                            bool isValid = Validation.ValidateCreditCardCVVNumber(userCreditCardCVVRaw, out string validationResponse, out int userCreditCardCVVClean);
+                            if (isValid)
+                            {
+                                cvv = userCreditCardCVVClean;
+                                break;
+                            }
+                            else
+                            {
+                                PrintValidationResponse(validationResponse);
+                            }
+                        }
+                        payment = new Payment(ccNum, cvv, expDate);
                         break;
 
                     case PaymentOptions.Cash:
-                        Console.WriteLine("Enter cash tendered:");
                         double cashTendered = 0;
-                        double.TryParse(Console.ReadLine(), out cashTendered);
-                        payment = new Payment(cashTendered); // need actual values from program
+                        while (true)
+                        {
+                            Console.WriteLine("Enter cash tendered:");
+                            string userCashInputRaw = Console.ReadLine();
+                            bool isValid = Validation.ValidateCashTendered(userCashInputRaw, payment.GrandTotal, out string validationResponse, out double userCashInput);
+                            if (isValid)
+                            {
+                                cashTendered = userCashInput;
+                                break;
+                            }
+                            else
+                            {
+                                PrintValidationResponse(validationResponse);
+                            }
+                        }
+                        payment = new Payment(cashTendered);
                         break;
 
                     case PaymentOptions.Check:
                         long checkNum = 0;
                         long acctNum = 0;
                         long routeNum = 0;
-                        Console.WriteLine("Enter Your Check Number:");
-                        Int64.TryParse(Console.ReadLine(), out checkNum);
-                        Console.WriteLine("Enter Your Account Number:");
-                        Int64.TryParse(Console.ReadLine(), out acctNum);
-                        Console.WriteLine("Enter Your Routing Number:");
-                        Int64.TryParse(Console.ReadLine(), out routeNum);
-                        payment = new Payment(checkNum, acctNum, routeNum); // need actual values from program
+                        while (true) 
+                        {
+                            Console.WriteLine("Enter Your Check Number:");
+                            string userCheckNumberRaw = Console.ReadLine();
+                            bool isValid = Validation.ValidateCheckNumber(userCheckNumberRaw, out string validationResponse, out string userCheckNumberClean);
+                            if (isValid)
+                            {
+                                checkNum = Convert.ToInt64(userCheckNumberClean);
+                                break;
+                            }
+                            else
+                            {
+                                PrintValidationResponse(validationResponse);
+                            }
+                        }
+                        while (true)
+                        {
+                            Console.WriteLine("Enter Your Account Number:");
+                            string userCheckAccountNumberRaw = Console.ReadLine();
+                            bool isValid = Validation.ValidateCheckAccountNumber(userCheckAccountNumberRaw, out string validationResponse, out string userCheckAccountNumberClean);
+                            if (isValid)
+                            {
+                                acctNum = Convert.ToInt64(userCheckAccountNumberClean);
+                                break;
+                            }
+                            else
+                            {
+                                PrintValidationResponse(validationResponse);
+                            }
+                        }
+                        while (true)
+                        {
+                            Console.WriteLine("Enter Your 9-Digit Routing Number:");
+                            string userCheckRoutingNumberRaw = Console.ReadLine();
+                            bool isValid = Validation.ValidateCheckRoutingNumber(userCheckRoutingNumberRaw, out string validationResponse, out string userCheckRoutingNumberClean);
+                            if (isValid)
+                            {
+                                routeNum = Convert.ToInt64(userCheckRoutingNumberClean);
+                                break;
+                            }
+                            else
+                            {
+                                PrintValidationResponse(validationResponse);
+                            }
+                        }
+                        payment = new Payment(checkNum, acctNum, routeNum);
                         break;
                 }
                 PrintReceipt(payment, order, foodOrder, drinkOrder, merchOrder, paymentMethod);
                 break;
             }
-            
         }
     }
     else if (mainMenuSelection == 2)
@@ -142,6 +233,7 @@ while (true)
         break;
     }
 }
+
 void DisplayMainMenu()
 {
     Console.WriteLine($"".PadRight(46, '*'));
@@ -150,12 +242,15 @@ void DisplayMainMenu()
     Console.WriteLine($"Enter 1 to start a new order.");
     Console.WriteLine($"Enter 2 to Exit.");
 }
+
 int GetMainMenuSelection()
 {
     DisplayMainMenu();
     int maxMenuOptionNumber = 2;
-    return GetUserMenuSelection(maxMenuOptionNumber);
+    bool isMainMenu = true;
+    return GetUserMenuSelection(maxMenuOptionNumber, isMainMenu);
 }
+
 void DisplayOrderMenu()
 {
     Console.ForegroundColor = ConsoleColor.Yellow;
@@ -166,13 +261,14 @@ void DisplayOrderMenu()
     Console.WriteLine($"Enter 1 to add Food to order.");
     Console.WriteLine($"Enter 2 to add Drink to order.");
     Console.WriteLine($"Enter 3 to add Merchandise to order.");
-    Console.WriteLine($"Enter 4 to cashout.");
+    Console.WriteLine($"Enter 4 to Cash-out.");
 }
+
 int GetOrderMenuSelection()
 {
     DisplayOrderMenu();
     int maxMenuOptionNumber = 4;
-    return GetUserMenuSelection(maxMenuOptionNumber);
+    return GetUserMenuSelection(maxMenuOptionNumber, false);
 }
 PaymentOptions GetPaymentMethod(Payment payment)
 {
@@ -181,9 +277,10 @@ PaymentOptions GetPaymentMethod(Payment payment)
     double tax = payment.Tax(subtotal);
 
     Console.WriteLine("Your Order Total is:");
-    Console.WriteLine($"{subtotal}");
-    Console.WriteLine($"{tax}");
-    Console.WriteLine($"{subtotal + tax}");
+    Console.WriteLine($"Subtotal: {subtotal.ToString("C")}");
+    Console.WriteLine($"Tax (6%): {tax.ToString("C")}");
+    payment.GrandTotal = subtotal + tax;
+    Console.WriteLine($"Total Bill: {payment.GrandTotal.ToString("C")}");
     Console.WriteLine();
 
     while (true)
@@ -222,16 +319,20 @@ PaymentOptions GetPaymentMethod(Payment payment)
     }
     return paymentOptions;
 }
+
 void DisplayFoodMenu()
 {
-    Console.WriteLine($"".PadRight(46, '*'));
+    Console.WriteLine($"".PadRight(61, '*'));
     Console.WriteLine("FOOD");
-    Console.WriteLine($"".PadRight(46, '*'));
+    Console.WriteLine($"".PadRight(61, '*'));
     foreach (Product p in productFile.products.Where(x => x.Type == "Food"))
     {
-        Console.WriteLine($"{p.ID} {p.Name.PadRight(40, '.')}{p.Price.ToString().PadLeft(6, '.'):C2}");
+        Console.WriteLine($"{p.ID} - {p.Name.PadRight(51, '.')}{p.Price.ToString("C").PadLeft(6, '.'):C2}");
+        Console.WriteLine($"{insertSpace.PadLeft(5, ' ')} {p.Description}");
+        Console.WriteLine();
     }
 }
+
 int GetFoodMenuSelection(List<int> foodIds)
 {
     while (true)
@@ -251,16 +352,20 @@ int GetFoodMenuSelection(List<int> foodIds)
         }
     }
 }
+
 void DisplayDrinkMenu()
 {
-    Console.WriteLine($"".PadRight(46, '*'));
+    Console.WriteLine($"".PadRight(61, '*'));
     Console.WriteLine("DRINKS");
-    Console.WriteLine($"".PadRight(46, '*'));
+    Console.WriteLine($"".PadRight(61, '*'));
     foreach (Product p in productFile.products.Where(x => x.Type == "Drink"))
     {
-        Console.WriteLine($"{p.ID} {p.Name.PadRight(40, '.')}{p.Price.ToString().PadLeft(6, '.'):C2}");
+        Console.WriteLine($"{p.ID} - {p.Name.PadRight(51, '.')}{p.Price.ToString("C").PadLeft(6, '.'):C2}");
+        Console.WriteLine($"{insertSpace.PadLeft(5, ' ')} {p.Description}");
+        Console.WriteLine();
     }
 }
+
 int GetDrinkMenuSelection(List<int> drinkIds)
 {
     while (true)
@@ -280,16 +385,20 @@ int GetDrinkMenuSelection(List<int> drinkIds)
         }
     }
 }
+
 void DisplayMerchMenu()
 {
-    Console.WriteLine($"".PadRight(46, '*'));
+    Console.WriteLine($"".PadRight(61, '*'));
     Console.WriteLine("MERCHANDISE");
-    Console.WriteLine($"".PadRight(46, '*'));
+    Console.WriteLine($"".PadRight(61, '*'));
     foreach (Product p in productFile.products.Where(x => x.Type == "Merchandise"))
     {
-        Console.WriteLine($"{p.ID} {p.Name.PadRight(40, '.')}{p.Price.ToString().PadLeft(6, '.'):C2}");
+        Console.WriteLine($"{p.ID} - {p.Name.PadRight(51, '.')}{p.Price.ToString("C").PadLeft(6, '.'):C2}");
+        Console.WriteLine($"{insertSpace.PadLeft(5, ' ')} {p.Description}");
+        Console.WriteLine();
     }
 }
+
 int GetMerchMenuSelection(List<int> merchIds)
 {
     while (true)
@@ -309,67 +418,85 @@ int GetMerchMenuSelection(List<int> merchIds)
         }
     }
 }
+
 void PrintReceipt(Payment payment, Order order, List<OrderLine> foodOrder, List<OrderLine> drinkOrder, List<OrderLine> merchOrder, PaymentOptions paymentMethod)
 {
     double subtotal = order.OrderLines.Sum(x => x.ExtPrice);
     double tax = payment.Tax(subtotal);
+    double grandTotal = subtotal + tax;
     double cashTendered = payment.CashTotal;
 
+    Console.Clear();
     Console.ForegroundColor = ConsoleColor.Yellow;
     Console.WriteLine("                GOOD TIME BREWERY & EATS                ");
     Console.WriteLine("--------------------------------------------------------");
     Console.WriteLine(string.Format("{0,-40} | {1,-04} | {2, 0}", "Item", "Qty", "Price"));
-    Console.WriteLine("------------------------------------------------------\n");
+    Console.WriteLine("--------------------------------------------------------\n");
 
-    Console.WriteLine("FOOD");
-    Console.WriteLine("--------------------------------------------------------");
-
-    foreach (OrderLine food in foodOrder)
+    if (foodOrder.Count > 0)
     {
-        Console.WriteLine(string.Format("{0,-40} | {1,-04} | {2, 0}",
-        food.Product.Name, food.Qty, string.Format("{0:C}", food.ExtPrice)));
+        foreach (OrderLine food in foodOrder)
+        {
+            Console.WriteLine("FOOD");
+            Console.WriteLine("--------------------------------------------------------");
+            Console.WriteLine(string.Format("{0,-40} | {1,-04} | {2, 0}",
+            food.Product.Name, food.Qty, string.Format("{0:C}", food.ExtPrice.ToString("C"))));
+        }
     }
-    Console.WriteLine("\nDRINKS");
-    Console.WriteLine("--------------------------------------------------------");
 
-    foreach (OrderLine drink in drinkOrder)
+    if (drinkOrder.Count > 0)
     {
-        Console.WriteLine(string.Format("{0,-40} | {1,-04} | {2, 0}",
-        drink.Product.Name, drink.Qty, string.Format("{0:C}", drink.ExtPrice)));
+        foreach (OrderLine drink in drinkOrder)
+        {
+            Console.WriteLine("\nDRINKS");
+            Console.WriteLine("--------------------------------------------------------");
+            Console.WriteLine(string.Format("{0,-40} | {1,-04} | {2, 0}",
+            drink.Product.Name, drink.Qty, string.Format("{0:C}", drink.ExtPrice.ToString("C"))));
+        }
     }
-    Console.WriteLine("\nMERCHANDISE");
-    Console.WriteLine("--------------------------------------------------------");
 
-    foreach (OrderLine merch in merchOrder)
+    if (merchOrder.Count > 0)
     {
-        Console.WriteLine(string.Format("{0,-40} | {1,-04} | {2, 0}",
-        merch.Product.Name, merch.Qty, string.Format("{0:C}", merch.ExtPrice)));
+        foreach (OrderLine merch in merchOrder)
+        {
+            Console.WriteLine("\nMERCHANDISE");
+            Console.WriteLine("--------------------------------------------------------");
+            Console.WriteLine(string.Format("{0,-40} | {1,-04} | {2, 0}",
+            merch.Product.Name, merch.Qty, string.Format("{0:C}", merch.ExtPrice.ToString("C"))));
+        }
     }
     Console.Write("\nTOTAL");
     Console.WriteLine("\n--------------------------------------------------------");
-    Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Subtotal", string.Format("{0:C}", subtotal)));
-    Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Tax (6%)", string.Format("{0:C}", tax)));
-    Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Total Bill", string.Format("{0:C}", subtotal + tax)));
+    Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Subtotal", string.Format("{0:C}", subtotal.ToString("C"))));
+    Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Tax (6%)", string.Format("{0:C}", tax.ToString("C"))));
+    Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Total Bill", string.Format("{0:C}", grandTotal.ToString("C"))));
     Console.Write("\nPAYMENT");
     Console.WriteLine("\n--------------------------------------------------------");
 
     switch (paymentMethod)
     {
         case PaymentOptions.CreditCard:
-            Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Payment via Credit Card", payment.Last4()));
+            Console.WriteLine(string.Format("{0,-29} | {1, 0}", "Payment via Credit Card", payment.Last4()));
             break;
 
         case PaymentOptions.Cash:
-            Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Cash Tendered", string.Format("{0:C}", cashTendered)));
-            Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Change Returned", string.Format("{0:C}", (cashTendered - (subtotal + tax)))));
+            Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Cash Tendered", string.Format("{0:C}", cashTendered.ToString("C"))));
+            double changeReturned = cashTendered - grandTotal;
+            Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Change Returned", string.Format("{0:C}", changeReturned.ToString("C"))));
             break;
         case PaymentOptions.Check:
-            Console.WriteLine(string.Format("{0,-47} | {1, 0}", "Payment via Check #", payment.CheckNum));
+            Console.WriteLine(string.Format("{0,-40} | {1, 0}", "Payment via Check", " Check #: " + payment.CheckNum));
             break;
     }
     Console.WriteLine("\n--------------------------------------------------------");
+    Console.WriteLine();
+    Console.WriteLine("Press any key to return to the main menu");
+    Console.ReadKey();
+    Console.Clear();
+    Console.ForegroundColor = ConsoleColor.Gray;
 }
-int GetUserMenuSelection(int maxMenuOptionNumber)
+
+int GetUserMenuSelection(int maxMenuOptionNumber, bool isMainMenu)
 {
     while (true)
     {
@@ -384,9 +511,18 @@ int GetUserMenuSelection(int maxMenuOptionNumber)
         else
         {
             PrintValidationResponse(validationResponse);
+            if (isMainMenu)
+            {
+                DisplayMainMenu();
+            }
+            else
+            {
+                DisplayOrderMenu();
+            }
         }
     }
 }
+
 int GetUserQuantity()
 {
     while (true)
@@ -405,6 +541,7 @@ int GetUserQuantity()
         }
     }
 }
+
 void PrintValidationResponse(string validationResponse)
 {
     Console.ForegroundColor = ConsoleColor.Red;
